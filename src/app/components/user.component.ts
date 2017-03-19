@@ -1,34 +1,24 @@
 /**
  * Created by Shreyas on 3/18/2017.
  */
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
+import { PostsService } from '../services/posts.service';
 
 @Component({
+  moduleId: module.id,
   selector: 'user',
-  template: `<h1>Hello  : <strong>{{name}}</strong></h1>
-    <p><strong>Email :</strong> {{email}}</p> 
-    <p><strong>Address:</strong> {{address.street}}, {{address.city}}, {{address.state}}</p>
-    <p><button class="btn btn-primary" (click)="toggleHobbies()">{{showHobbies ? "Hide Hobbies" : "Show Hobbies" }}</button></p>
-    <div *ngIf="showHobbies">
-      <p><strong>Hobbies: </strong></p>
-        <ul>
-            <li *ngFor = "let hobbie of hobbies">
-              {{hobbie}}
-            </li>
-          </ul>
-    </div>
-            
-    
-    `,
+  templateUrl: 'user.component.html',
+  providers: [PostsService]
 })
 export class UserComponent {
   name: string;
   email: string;
   address: {};
   hobbies: string[];
-  showHobbies:boolean = false;
+  showHobbies: boolean = false;
+  postsInter: postInterface[];
 
-  constructor() {
+  constructor(private postsService: PostsService) {
     this.name = 'Shreyas';
     this.email = 'shreyasmulay23@gmail.com';
     this.address = {
@@ -37,13 +27,32 @@ export class UserComponent {
       state: "M.P."
     };
     this.hobbies = ["Music", "Movies", "Sports"];
+
+    this.postsService.getPosts().subscribe(posts => {
+      this.postsInter = posts;
+    })
+
   }
 
-  toggleHobbies(){
-    if(this.showHobbies == true){
+  toggleHobbies() {
+    if (this.showHobbies == true) {
       this.showHobbies = false
-    }else{
+    } else {
       this.showHobbies = true;
     }
   }
+
+  addHobby(hobby: string) {
+    this.hobbies.push(hobby);
+  }
+
+  deleteHobby(i: number) {
+    this.hobbies.splice(i, 1);
+  }
+}
+
+interface postInterface {
+  userId : number;
+  title : string;
+  body: string;
 }
